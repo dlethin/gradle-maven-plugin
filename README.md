@@ -1,6 +1,6 @@
 # gradle-maven-plugin
 
-[![Build Status](https://secure.travis-ci.org/if6was9/gradle-maven-plugin.png?branch=master)](http://travis-ci.org/if6was9/gradle-maven-plugin)
+[![Circle CI](https://circleci.com/gh/LendingClub/gradle-maven-plugin.svg?style=svg)](https://circleci.com/gh/LendingClub/gradle-maven-plugin)
 
 
 This is a maven plugin that makes it easy to invoke Gradle tasks from within Maven.  
@@ -29,31 +29,31 @@ The gradle-maven-plugin is now in Maven Central, so there is no need to declare 
 
 To use the plugin, simply declare the plugin and bind it to the maven lifecycle phase of your choice:
 
-```
-<plugin>
-      <groupId>org.fortasoft</groupId>
-      <artifactId>gradle-maven-plugin</artifactId>
-      <version>1.0.5</version>
-        <configuration>
-        	<tasks>
-			<!-- this would effectively call "gradle doSomething" -->
-			<task>doSomething</task>
-		</tasks>
-       </configuration>
-        <executions>
-          <execution>
-	    <!-- You can bind this to any phase you like -->
-            <phase>compile</phase>
-            <goals>
-	       <!-- goal must be "invoke" -->
-               <goal>invoke</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+```xml
+	<plugin>
+		<groupId>org.fortasoft</groupId>
+		<artifactId>gradle-maven-plugin</artifactId>
+		<version>1.0.5</version>
+		<configuration>
+			<tasks>
+				<!-- this would effectively call "gradle doSomething" -->
+				<task>doSomething</task>
+			</tasks>
+		</configuration>
+		<executions>
+			<execution>
+				<!-- You can bind this to any phase you like -->
+				<phase>compile</phase>
+				<goals>
+					<!-- goal must be "invoke" -->
+					<goal>invoke</goal>
+				</goals>
+			</execution>
+		</executions>
+	</plugin>
 ```
 
-Now when you run maven, gradle will be invoked and execute the "doSomething" task defined in build.gradle.
+Now when you run maven, gradle will be invoked and execute the "doSomething" task defined in `build.gradle`.
 
 Obviously you can change the task(s) to suit your needs.
 

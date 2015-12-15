@@ -35,9 +35,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.Mojo;
+
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Goal which invokes gradle!
@@ -46,7 +52,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 @Mojo(name="invoke")
 public class GradleMojo extends AbstractMojo {
 
-	@Parameter(defaultValue="1.7", required=true)
+	@Parameter(defaultValue="2.4", required=true)
 	private String gradleVersion;
 
 
@@ -73,7 +79,6 @@ public class GradleMojo extends AbstractMojo {
 	@Parameter
 	private File javaHome;
 
-
 	@Parameter(defaultValue="${project.basedir}",
 		required=true)
 	private File mavenBaseDir;
@@ -91,6 +96,11 @@ public class GradleMojo extends AbstractMojo {
 	@Parameter
 	private File gradleInstallationDir;
 	
+	@Parameter( defaultValue = "${session}", readonly = true )
+    private MavenSession session;
+	
+	@Parameter( defaultValue = "${project}", readonly = true )
+    private MavenProject project;
 
 	File getGradleProjectDirectory() {
 		return gradleProjectDirectory;
@@ -161,6 +171,11 @@ public class GradleMojo extends AbstractMojo {
 			Binding b = new Binding();
 
 			b.setVariable("mavenBaseDir", mavenBaseDir);
+
+			// add common maven model objects to binding
+			b.setVariable("session", session);
+			b.setVariable("project", project);
+
 			GroovyShell gs = new GroovyShell(b);
 
 			Object rval = gs.evaluate(checkInvokeScript);
@@ -227,8 +242,11 @@ public class GradleMojo extends AbstractMojo {
 			if (jvmArgs != null && jvmArgs.length > 0) {
 				launcher.setJvmArguments(jvmArgs);
 			}
-			if (args != null && args.length > 0) {
-				launcher.withArguments(args);
+
+			String[] finalArgs = buildFinalArgs(args);
+
+			if (finalArgs != null && finalArgs.length > 0) {
+				launcher.withArguments(finalArgs);
 			}
 			if (javaHome != null) {
 				launcher.setJavaHome(javaHome);
@@ -255,6 +273,34 @@ public class GradleMojo extends AbstractMojo {
 			}
 			NewMojoLogger.detachMojo();
 		}
+	}
+
+	/*
+	 * Right now this is only conditionally adding
+	 * gradle offline option to command line, but 
+	 * there is additional functionality we can do
+	 * in the future.
+	 */
+	private String[] buildFinalArgs(String[] args) {
+
+		List<String> argList = new ArrayList<String>();
+
+		if (args != null) {
+			for (int i=0; i < args.length; i++) {
+				argList.add(args[i]);
+			}
+		}
+
+		boolean offline = session.getSettings().isOffline();
+
+		// If we're offline in maven, let's be offline
+		// in gradle as well.
+		if (offline && !GradleArgs.OFFLINE.exists(argList)) {
+			argList.add(GradleArgs.OFFLINE.getLongValue());
+		}
+
+		// convert back to array
+		return argList.toArray(new String[argList.size()]);
 	}
 
 	synchronized void waitForGradleToComplete() {
