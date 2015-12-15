@@ -7,14 +7,7 @@ This is a maven plugin that makes it easy to invoke Gradle tasks from within Mav
 
 **NOTE: This is a fork of the original [gradle-maven-plugin](https://github.com/if6was9/gradle-maven-plugin) with the following feature additions:**
 
-* *Fix to make sure build output (stdout & stderr) coming from the gradle builds launched through this plugin are visible in the maven build output. Otherwise, it makes it hard to validate or troubleshoot issues that might arise.*
-
-Additional changes were made in order to allow the github travis-ci builds to pass:
-
-* *Modified .travis.yml file to match currently supported travis java tools (JDK6 no longer supported)*
-* *Modified the maven mojo to use maven annotations instead of javadoc annotations when defining the mojo parameters and the source of there default values.  Maven 3.2 seems to no longer support javadoc annotations, and because the travis-ci build only seems to support maven 3.2, the integration tests end up failing because the mojo does not get configured correctly.*
-* *Set the integration test's invoker-plugin streamLogs setting to true.  This is necessary, because if for some reason integration tests fail, the build output will go into the maven output for easier troubleshooting.  Originally, when the builds failed on travis-ci, the failures when to a build log, but there is no easy way to get access to those logs on travis to troubleshoot the issue.*
-
+* * Added MavenProject & MavenSession objects to binding variables so they can be accessed by any supplied checkInvokeScript to the mojo (the variable names are project & session, respectively)
 
 # Objective
 
