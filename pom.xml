@@ -116,6 +116,32 @@
                 </executions>
             </plugin>
         </plugins>
+        <!--
+            added in the dlethin-master branch of my fork
+            as I want to use the maven release plugin, bug
+            the configuration for the maven-release-plugin we
+            inherit from the parent (oss-parent) turns on
+            a profile called sonatype-oss-release, which turns
+            on javadoc, source. I'm apparently having problems
+            producing a javadoc jar, so I'm disabling it. 
+        -->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.1</version>
+                    <configuration>
+                        <mavenExecutorId>forked-path</mavenExecutorId>
+                        <useReleaseProfile>false</useReleaseProfile>
+                        <!--
+                        <arguments>${arguments} -Psonatype-oss-release</arguments>
+                    -->
+                        <arguments>${arguments}</arguments>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
     <dependencies>
         <!-- dependencies to annotations -->
