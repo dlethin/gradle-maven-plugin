@@ -8,8 +8,16 @@ This is a maven plugin that makes it easy to invoke Gradle tasks from within Mav
 **NOTE: This is a fork of the original [gradle-maven-plugin](https://github.com/if6was9/gradle-maven-plugin) with the following feature additions:**
 
 * Added MavenProject & MavenSession objects to binding variables so they can be accessed by any supplied checkInvokeScript to the mojo (the variable names are project & session, respectively)
+
 * You can now pass gradle project and system properties read from maven system properties. For example, you can now pass *-Dgradle.prop.myProp=value* and *-Dgradle.sys.mySysProp=value* on the mvn command line and have these get passed as the arguments *-PmyProp=value* and *-DmySysProp=value* when gradle is invoked.
 
+* Added a pluginManagement section to the pom to alter the way the release plugin is configured. I wanted to disable adding the creation of javadoc jars because that seems to be failing (probably due to some shading that is going on) and I don't care about the javadoc in my fork.
+
+**NOTE: When I want to perform a release on this fork, I obviously don't have the rights to publish to maven central or bin tray so I publish to my own repository by specifying an alternate deployment repository like this:**
+
+```
+mvn release:prepare release:perform -DdevelopmentVersion=1.0.7.dlethin-SNAPSHOT -DreleaseVersion=1.0.7.dlethin-1 -DuseReleaseProfile=false -Darguments=-DaltDeploymentRepository=my_repository_id::default::http://repositoryhost.com/path/to/my_repo
+```
 # Objective
 
 Gradle is an awesome general-purpose tool.  If your project/organization is committed to maven, switching to gradle may not 
