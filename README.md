@@ -7,7 +7,8 @@ This is a maven plugin that makes it easy to invoke Gradle tasks from within Mav
 
 **NOTE: This is a fork of the original [gradle-maven-plugin](https://github.com/if6was9/gradle-maven-plugin) with the following feature additions:**
 
-* * Added MavenProject & MavenSession objects to binding variables so they can be accessed by any supplied checkInvokeScript to the mojo (the variable names are project & session, respectively)
+* Added MavenProject & MavenSession objects to binding variables so they can be accessed by any supplied checkInvokeScript to the mojo (the variable names are project & session, respectively)
+* You can now pass gradle project and system properties read from maven system properties. For example, you can now pass *-Dgradle.prop.myProp=value* and *-Dgradle.sys.mySysProp=value* on the mvn command line and have these get passed as the arguments *-PmyProp=value* and *-DmySysProp=value* when gradle is invoked.
 
 # Objective
 
